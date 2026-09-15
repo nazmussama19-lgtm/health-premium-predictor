@@ -1,0 +1,9 @@
+# Versions verifiees en local et compatibles avec le rechargement des
+# artefacts entraines sous scikit-learn 1.3 (cf. README, section Artefacts).
+streamlit==1.64.0
+scikit-learn==1.7.2
+xgboost==3.2.0
+pandas==2.3.2
+numpy==2.2.6
+joblib==1.5.2
+openpyxl==3.1.5

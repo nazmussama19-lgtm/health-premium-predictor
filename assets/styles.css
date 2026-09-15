@@ -1,0 +1,290 @@
+/* ==========================================================================
+   Direction artistique : instrument de tarification, registre editorial.
+   Serif en display pour les chiffres et les titres, sans-serif pour l'UI.
+   La couleur ne sert qu'a porter du sens (action, segment, formule).
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --paper:      #FBFAF7;
+  --surface:    #FFFFFF;
+  --ink:        #15171C;
+  --ink-2:      #5A6070;
+  --ink-3:      #929AAA;
+  --line:       #E7E3DC;
+  --line-soft:  #F1EEE8;
+  --accent:     #1F5F55;
+  --accent-2:   #2E7D6F;
+  --accent-sft: #EAF2EF;
+  --bronze:     #9A6B4A;
+  --silver:     #7D8694;
+  --gold:       #B0813F;
+  --radius:     14px;
+  --radius-sm:  9px;
+}
+
+/* --- Remise a zero du chrome Streamlit ----------------------------------- */
+
+[data-testid="stAppViewContainer"] { background: var(--paper); }
+[data-testid="stHeader"] { background: transparent; height: 0; }
+[data-testid="stToolbar"] { right: 1rem; }
+[data-testid="stDecoration"] { display: none; }
+footer, #MainMenu { visibility: hidden; }
+
+[data-testid="stMainBlockContainer"] {
+  max-width: 1180px;
+  padding: 2.4rem 2rem 5rem;
+}
+
+html, body, [data-testid="stAppViewContainer"] * {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- En-tete -------------------------------------------------------------- */
+
+.masthead { border-top: 2px solid var(--ink); padding-top: 18px; margin-bottom: 34px; }
+
+.masthead-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+}
+
+.eyebrow {
+  font-size: 10.5px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+
+.masthead h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(38px, 5.2vw, 60px); font-weight: 400; line-height: 1.02;
+  letter-spacing: -.015em; color: var(--ink); margin: 0 0 14px;
+}
+
+.masthead h1 em { font-style: italic; color: var(--accent); }
+
+.masthead p {
+  font-size: 14.5px; line-height: 1.62; color: var(--ink-2);
+  max-width: 60ch; margin: 0;
+}
+
+/* --- Sections du formulaire ---------------------------------------------- */
+
+.section-head {
+  display: flex; align-items: baseline; gap: 12px;
+  margin: 34px 0 6px; padding-bottom: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.section-head.is-first { margin-top: 6px; }
+
+.section-num {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 19px; color: var(--accent); line-height: 1;
+  min-width: 26px;
+}
+
+.section-title {
+  font-size: 13.5px; font-weight: 600; color: var(--ink);
+  letter-spacing: -.005em;
+}
+
+.section-hint {
+  font-size: 12px; color: var(--ink-3); margin-left: auto; text-align: right;
+}
+
+/* --- Champs de saisie ----------------------------------------------------- */
+
+[data-testid="stWidgetLabel"] p {
+  font-size: 12px !important; font-weight: 500 !important;
+  color: var(--ink-2) !important; letter-spacing: .005em;
+  margin-bottom: 3px !important;
+}
+
+[data-baseweb="select"] > div,
+[data-testid="stNumberInputContainer"] {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-sm) !important;
+  min-height: 42px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 1px 1.5px rgba(21, 23, 28, .03);
+}
+
+[data-baseweb="select"] > div:hover,
+[data-testid="stNumberInputContainer"]:hover { border-color: #D3CDC3 !important; }
+
+[data-baseweb="select"] > div:focus-within,
+[data-testid="stNumberInputContainer"]:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-sft) !important;
+}
+
+[data-baseweb="select"] div[value], [data-testid="stNumberInput"] input {
+  font-size: 14px !important; color: var(--ink) !important; font-weight: 500;
+}
+
+[data-testid="stNumberInput"] button { border-color: var(--line) !important; }
+
+/* Curseur du risque genetique */
+[data-testid="stSlider"] [role="slider"] {
+  background: var(--accent) !important; border-color: var(--accent) !important;
+}
+[data-testid="stSliderTickBarMin"], [data-testid="stSliderTickBarMax"] {
+  font-size: 11px !important; color: var(--ink-3) !important;
+}
+
+/* --- Bouton principal ----------------------------------------------------- */
+
+[data-testid="stFormSubmitButton"] { margin-top: 22px; }
+
+[data-testid="stFormSubmitButton"] button {
+  width: 100%; background: var(--ink) !important; color: #fff !important;
+  border: none !important; border-radius: var(--radius-sm) !important;
+  padding: 13px 20px !important; font-size: 13.5px !important;
+  font-weight: 600 !important; letter-spacing: .01em;
+  transition: background .18s ease, transform .12s ease;
+}
+[data-testid="stFormSubmitButton"] button:hover {
+  background: var(--accent) !important; transform: translateY(-1px);
+}
+[data-testid="stFormSubmitButton"] button:active { transform: translateY(0); }
+[data-testid="stFormSubmitButton"] button:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-sft) !important;
+}
+
+[data-testid="stForm"] {
+  border: none !important; padding: 0 !important; background: transparent !important;
+}
+
+/* --- Panneau de resultat --------------------------------------------------- */
+
+.panel {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 26px 24px 22px;
+  box-shadow: 0 1px 2px rgba(21,23,28,.035), 0 12px 32px -18px rgba(21,23,28,.18);
+}
+
+.panel.is-empty {
+  background: transparent; border: 1px dashed var(--line);
+  box-shadow: none; text-align: center; padding: 56px 26px;
+}
+
+.panel.is-empty .glyph {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 46px; color: var(--line); line-height: 1; display: block;
+  margin-bottom: 14px;
+}
+.panel.is-empty p {
+  font-size: 13px; color: var(--ink-3); line-height: 1.6;
+  max-width: 30ch; margin: 0 auto;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-sft); color: var(--accent);
+  font-size: 10.5px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; padding: 5px 11px; border-radius: 99px;
+  margin-bottom: 20px;
+}
+.badge .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent-2); display: block;
+}
+
+.result-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px;
+}
+
+.result-value {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(46px, 6vw, 62px); line-height: 1; color: var(--ink);
+  letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+  display: flex; align-items: baseline; gap: 7px;
+}
+.result-value .cur { font-size: .48em; color: var(--ink-3); }
+
+.result-sub {
+  font-size: 13px; color: var(--ink-2); margin-top: 9px;
+}
+.result-sub strong { color: var(--ink); font-weight: 600; }
+
+.rule { height: 1px; background: var(--line-soft); margin: 22px 0 18px; }
+
+/* --- Comparatif des formules ---------------------------------------------- */
+
+.cmp-title {
+  font-size: 11px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 13px;
+}
+
+.cmp-row {
+  display: grid; grid-template-columns: 58px 1fr auto;
+  align-items: center; gap: 12px; padding: 7px 0;
+}
+
+.cmp-name {
+  font-size: 12.5px; font-weight: 500; color: var(--ink-2);
+}
+.cmp-row.is-active .cmp-name { color: var(--ink); font-weight: 600; }
+
+.cmp-track {
+  height: 6px; background: var(--line-soft);
+  border-radius: 99px; overflow: hidden;
+}
+/* Assez sombre pour rester lisible sur la piste : avec la teinte des
+   bordures, les formules non retenues disparaissaient a l'ecran. */
+.cmp-fill {
+  display: block; height: 100%; border-radius: 99px;
+  background: #C6BFB2;
+}
+.cmp-row.is-active .cmp-fill { background: var(--accent); }
+.cmp-row[data-plan="Bronze"].is-active .cmp-fill { background: var(--bronze); }
+.cmp-row[data-plan="Argent"].is-active .cmp-fill { background: var(--silver); }
+.cmp-row[data-plan="Or"].is-active     .cmp-fill { background: var(--gold); }
+
+.cmp-val {
+  font-size: 12.5px; color: var(--ink-2); font-weight: 500;
+  font-variant-numeric: tabular-nums; min-width: 72px; text-align: right;
+}
+.cmp-row.is-active .cmp-val { color: var(--ink); font-weight: 600; }
+
+/* --- Note de fiabilite ----------------------------------------------------- */
+
+.note {
+  display: flex; gap: 9px; align-items: flex-start;
+  margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-soft);
+  font-size: 11.5px; line-height: 1.55; color: var(--ink-3);
+}
+.note .mark {
+  flex: none; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--accent-sft); color: var(--accent);
+  font-size: 9px; font-weight: 700; display: grid; place-items: center;
+  margin-top: 1px;
+}
+.note strong { color: var(--ink-2); font-weight: 600; }
+
+/* --- Pied de page ---------------------------------------------------------- */
+
+.colophon {
+  margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  font-size: 11.5px; color: var(--ink-3);
+}
+.colophon strong { color: var(--ink-2); font-weight: 600; }
+
+/* --- Panneau collant sur grand ecran --------------------------------------- */
+
+/* Cible la seule colonne contenant le panneau : viser la derniere colonne
+   rendrait aussi collantes les colonnes internes du formulaire. */
+@media (min-width: 900px) {
+  [data-testid="stColumn"]:has(.panel) {
+    position: sticky; top: 24px; align-self: flex-start;
+  }
+}
+
+@media (max-width: 899px) {
+  [data-testid="stMainBlockContainer"] { padding: 1.6rem 1.1rem 3rem; }
+  .masthead h1 { font-size: 34px; }
+}
