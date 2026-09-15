@@ -9,6 +9,7 @@ from pathlib import Path
 
 import streamlit as st
 
+from content import CONTEXTE, GUIDE
 from prediction_helper import YOUNG_AGE_CUTOFF, predict, predict_all_plans
 
 ASSETS = Path(__file__).parent / "assets"
@@ -126,156 +127,167 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-colonne_saisie, colonne_resultat = st.columns([1.32, 1], gap="large")
+onglet_tarification, onglet_contexte, onglet_guide = st.tabs(
+    ["Tarification", "Contexte et méthode", "Guide du souscripteur"]
+)
 
-with colonne_saisie:
-    with st.form("tarification", border=False):
-        titre_section("01", "Profil de l'assuré", "4 champs", premier=True)
-        l1 = st.columns(2)
-        with l1[0]:
-            age = st.number_input("Âge", min_value=18, max_value=100, value=32, step=1)
-        with l1[1]:
-            personnes_a_charge = st.number_input(
-                "Personnes à charge", min_value=0, max_value=20, value=0, step=1
-            )
-        l2 = st.columns(2)
-        with l2[0]:
-            genre = st.selectbox("Genre", list(GENRES))
-        with l2[1]:
-            situation = st.selectbox("Situation familiale", list(SITUATIONS))
+with onglet_tarification:
+    colonne_saisie, colonne_resultat = st.columns([1.32, 1], gap="large")
 
-        titre_section("02", "Situation professionnelle et revenus", "2 champs")
-        l3 = st.columns(2)
-        with l3[0]:
-            emploi = st.selectbox("Statut professionnel", list(EMPLOIS))
-        with l3[1]:
-            revenu = st.number_input(
-                "Revenu annuel (lakhs)",
+    with colonne_saisie:
+        with st.form("tarification", border=False):
+            titre_section("01", "Profil de l'assuré", "4 champs", premier=True)
+            l1 = st.columns(2)
+            with l1[0]:
+                age = st.number_input("Âge", min_value=18, max_value=100, value=32, step=1)
+            with l1[1]:
+                personnes_a_charge = st.number_input(
+                    "Personnes à charge", min_value=0, max_value=20, value=0, step=1
+                )
+            l2 = st.columns(2)
+            with l2[0]:
+                genre = st.selectbox("Genre", list(GENRES))
+            with l2[1]:
+                situation = st.selectbox("Situation familiale", list(SITUATIONS))
+
+            titre_section("02", "Situation professionnelle et revenus", "2 champs")
+            l3 = st.columns(2)
+            with l3[0]:
+                emploi = st.selectbox("Statut professionnel", list(EMPLOIS))
+            with l3[1]:
+                revenu = st.number_input(
+                    "Revenu annuel (lakhs)",
+                    min_value=0,
+                    max_value=200,
+                    value=20,
+                    step=1,
+                    help="1 lakh = 100 000 roupies indiennes.",
+                )
+
+            titre_section("03", "Santé et habitudes de vie", "4 champs")
+            l4 = st.columns(2)
+            with l4[0]:
+                corpulence = st.selectbox("Corpulence (IMC)", list(CORPULENCES))
+            with l4[1]:
+                tabagisme = st.selectbox("Tabagisme", list(TABAGISMES))
+            antecedents = st.selectbox("Antécédents médicaux", list(ANTECEDENTS))
+            risque_genetique = st.slider(
+                "Facteur de risque génétique",
                 min_value=0,
-                max_value=200,
-                value=20,
-                step=1,
-                help="1 lakh = 100 000 roupies indiennes.",
+                max_value=5,
+                value=0,
+                help=(
+                    "Score de 0 (aucun antécédent familial) à 5 (antécédents lourds). "
+                    "Ce facteur n'influe que sur les profils de 25 ans ou moins."
+                ),
             )
 
-        titre_section("03", "Santé et habitudes de vie", "4 champs")
-        l4 = st.columns(2)
-        with l4[0]:
-            corpulence = st.selectbox("Corpulence (IMC)", list(CORPULENCES))
-        with l4[1]:
-            tabagisme = st.selectbox("Tabagisme", list(TABAGISMES))
-        antecedents = st.selectbox("Antécédents médicaux", list(ANTECEDENTS))
-        risque_genetique = st.slider(
-            "Facteur de risque génétique",
-            min_value=0,
-            max_value=5,
-            value=0,
-            help=(
-                "Score de 0 (aucun antécédent familial) à 5 (antécédents lourds). "
-                "Ce facteur n'influe que sur les profils de 25 ans ou moins."
-            ),
-        )
+            titre_section("04", "Contrat", "2 champs")
+            l5 = st.columns(2)
+            with l5[0]:
+                formule = st.selectbox("Formule souscrite", list(FORMULES))
+            with l5[1]:
+                region = st.selectbox("Région de résidence", list(REGIONS))
 
-        titre_section("04", "Contrat", "2 champs")
-        l5 = st.columns(2)
-        with l5[0]:
-            formule = st.selectbox("Formule souscrite", list(FORMULES))
-        with l5[1]:
-            region = st.selectbox("Région de résidence", list(REGIONS))
+            calculer = st.form_submit_button("Calculer la prime annuelle")
 
-        calculer = st.form_submit_button("Calculer la prime annuelle")
+    with colonne_resultat:
+        if not calculer:
+            st.markdown(
+                """
+                <div class="panel is-empty">
+                  <span class="glyph">&#9671;</span>
+                  <p>
+                    Complétez le formulaire puis lancez le calcul pour afficher
+                    l'estimation et le comparatif des trois formules.
+                  </p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        else:
+            saisie = {
+                "Age": age,
+                "Number of Dependants": personnes_a_charge,
+                "Income in Lakhs": revenu,
+                "Genetical Risk": risque_genetique,
+                "Insurance Plan": FORMULES[formule],
+                "Employment Status": EMPLOIS[emploi],
+                "Gender": GENRES[genre],
+                "Marital Status": SITUATIONS[situation],
+                "BMI Category": CORPULENCES[corpulence],
+                "Smoking Status": TABAGISMES[tabagisme],
+                "Region": REGIONS[region],
+                "Medical History": ANTECEDENTS[antecedents],
+            }
 
-with colonne_resultat:
-    if not calculer:
-        st.markdown(
-            """
-            <div class="panel is-empty">
-              <span class="glyph">&#9671;</span>
-              <p>
-                Complétez le formulaire puis lancez le calcul pour afficher
-                l'estimation et le comparatif des trois formules.
-              </p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-    else:
-        saisie = {
-            "Age": age,
-            "Number of Dependants": personnes_a_charge,
-            "Income in Lakhs": revenu,
-            "Genetical Risk": risque_genetique,
-            "Insurance Plan": FORMULES[formule],
-            "Employment Status": EMPLOIS[emploi],
-            "Gender": GENRES[genre],
-            "Marital Status": SITUATIONS[situation],
-            "BMI Category": CORPULENCES[corpulence],
-            "Smoking Status": TABAGISMES[tabagisme],
-            "Region": REGIONS[region],
-            "Medical History": ANTECEDENTS[antecedents],
-        }
+            prime = predict(saisie)
+            par_formule = predict_all_plans(saisie)
+            maximum = max(par_formule.values()) or 1
 
-        prime = predict(saisie)
-        par_formule = predict_all_plans(saisie)
-        maximum = max(par_formule.values()) or 1
-
-        segment = "young" if age <= YOUNG_AGE_CUTOFF else "rest"
-        libelle_segment = (
-            f"Modèle {YOUNG_AGE_CUTOFF} ans et moins"
-            if segment == "young"
-            else f"Modèle plus de {YOUNG_AGE_CUTOFF} ans"
-        )
-
-        lignes = []
-        for libelle_fr, valeur_modele in FORMULES.items():
-            montant = par_formule[valeur_modele]
-            largeur = montant / maximum * 100
-            actif = " is-active" if valeur_modele == FORMULES[formule] else ""
-            lignes.append(
-                f'<div class="cmp-row{actif}" data-plan="{libelle_fr}">'
-                f'<span class="cmp-name">{libelle_fr}</span>'
-                f'<span class="cmp-track"><span class="cmp-fill" style="width:{largeur:.1f}%"></span></span>'
-                f'<span class="cmp-val">{format_montant(montant)}&nbsp;&#8377;</span>'
-                f"</div>"
+            segment = "young" if age <= YOUNG_AGE_CUTOFF else "rest"
+            libelle_segment = (
+                f"Modèle {YOUNG_AGE_CUTOFF} ans et moins"
+                if segment == "young"
+                else f"Modèle plus de {YOUNG_AGE_CUTOFF} ans"
             )
 
-        # Virgule decimale, separateur francais.
-        fiabilite = f"{FIABILITE[segment]:.1f}".replace(".", ",")
+            lignes = []
+            for libelle_fr, valeur_modele in FORMULES.items():
+                montant = par_formule[valeur_modele]
+                largeur = montant / maximum * 100
+                actif = " is-active" if valeur_modele == FORMULES[formule] else ""
+                lignes.append(
+                    f'<div class="cmp-row{actif}" data-plan="{libelle_fr}">'
+                    f'<span class="cmp-name">{libelle_fr}</span>'
+                    f'<span class="cmp-track"><span class="cmp-fill" style="width:{largeur:.1f}%"></span></span>'
+                    f'<span class="cmp-val">{format_montant(montant)}&nbsp;&#8377;</span>'
+                    f"</div>"
+                )
 
-        note_genetique = (
-            ""
-            if segment == "young"
-            else (
-                " Le facteur de risque génétique n'entre pas dans le calcul "
-                "au-delà de 25 ans : il était absent des données d'entraînement "
-                "de ce segment."
+            # Virgule decimale, separateur francais.
+            fiabilite = f"{FIABILITE[segment]:.1f}".replace(".", ",")
+
+            note_genetique = (
+                ""
+                if segment == "young"
+                else (
+                    " Le facteur de risque génétique n'entre pas dans le calcul "
+                    "au-delà de 25 ans : il était absent des données d'entraînement "
+                    "de ce segment."
+                )
             )
-        )
 
-        st.markdown(
-            f"""
-            <div class="panel">
-              <span class="badge"><span class="dot"></span>{libelle_segment}</span>
-              <div class="result-label">Prime annuelle estimée</div>
-              <div class="result-value"><span class="cur">&#8377;</span>{format_montant(prime)}</div>
-              <div class="result-sub">
-                soit environ <strong>{format_montant(round(prime / 12))}&nbsp;&#8377;</strong> par mois
-              </div>
-              <div class="rule"></div>
-              <div class="cmp-title">Comparatif des formules</div>
-              {"".join(lignes)}
-              <div class="note">
-                <span class="mark">i</span>
-                <span>
-                  Sur ce segment, <strong>{fiabilite}&nbsp;% des estimations</strong>
-                  s'écartent de moins de 10&nbsp;% du montant réellement constaté.
-                  {note_genetique}
-                </span>
-              </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+            st.markdown(
+                f"""
+                <div class="panel">
+                  <span class="badge"><span class="dot"></span>{libelle_segment}</span>
+                  <div class="result-label">Prime annuelle estimée</div>
+                  <div class="result-value"><span class="cur">&#8377;</span>{format_montant(prime)}</div>
+                  <div class="result-sub">
+                    soit environ <strong>{format_montant(round(prime / 12))}&nbsp;&#8377;</strong> par mois
+                  </div>
+                  <div class="rule"></div>
+                  <div class="cmp-title">Comparatif des formules</div>
+                  {"".join(lignes)}
+                  <div class="note">
+                    <span class="mark">i</span>
+                    <span>
+                      Sur ce segment, <strong>{fiabilite}&nbsp;% des estimations</strong>
+                      s'écartent de moins de 10&nbsp;% du montant réellement constaté.
+                      {note_genetique}
+                    </span>
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+with onglet_contexte:
+    st.markdown(CONTEXTE, unsafe_allow_html=True)
+
+with onglet_guide:
+    st.markdown(GUIDE, unsafe_allow_html=True)
 
 st.markdown(
     """

@@ -56,7 +56,17 @@ pip install -r requirements.txt
 streamlit run main.py
 ```
 
-L'application s'ouvre sur `http://localhost:8501`.
+L'application s'ouvre sur `http://localhost:8501` et se compose de trois
+onglets :
+
+- **Tarification** — le formulaire et le résultat ;
+- **Contexte et méthode** — la démarche de modélisation, les performances
+  mesurées et les limites connues ;
+- **Guide du souscripteur** — le glossaire des champs, la lecture du résultat
+  et les cas où il vaut mieux repasser en instruction manuelle.
+
+Les deux derniers onglets tiennent lieu de support de formation : un
+souscripteur peut prendre l'outil en main sans documentation externe.
 
 ---
 
@@ -89,6 +99,7 @@ python tests/validate_pipeline.py
 .
 ├── main.py                  Interface Streamlit (français)
 ├── prediction_helper.py     Prétraitement, mise à l'échelle, routage
+├── content.py               Textes des onglets contexte et guide
 ├── assets/styles.css        Feuille de style
 ├── artifacts/               Modèles et scalers entraînés
 ├── notebooks/               Analyse exploratoire et entraînement
