@@ -11,6 +11,12 @@ l'assuré.
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.64-1F5F55)
 ![Licence](https://img.shields.io/badge/licence-MIT-1F5F55)
 
+**[→ Essayer l'application en ligne](https://health-premium-predictor-k7b2nuki4hwghmakieq9sq.streamlit.app/)**
+
+> Hébergée sur Streamlit Community Cloud. Si l'app n'a pas été ouverte depuis
+> plusieurs jours, elle se met en veille : cliquez sur le bouton de réveil et
+> comptez une minute de démarrage.
+
 ---
 
 ## Le problème et la démarche
